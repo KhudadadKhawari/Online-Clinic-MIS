@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} 403 Forbidden {% endblock %}
+{% block head %}
+<style>
+    .error-template {padding: 40px 15px;text-align: center;}
+    .error-actions {margin-top:15px;margin-bottom:15px;}
+    .error-actions .btn { margin-right:10px; }
+</style>
+{% endblock head %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <img src="{% static 'images/error_403.png'%}" alt="error 400" width="400px" class="img-fluid">
+                <h2>403 Forbidden</h2>
+                <div class="error-details">
+                    You are not allowed to view this page.
+                </div>
+                <div class="error-actions">
+                    <input class="btn btn-lg btn-outline-primary" type="button" value="Go Back" onClick="javascript:history.go(-1);">
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

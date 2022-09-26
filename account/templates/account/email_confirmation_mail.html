@@ -1,0 +1,14 @@
+{% autoescape off %}
+<h3>
+    Hi {{ user.get_username }},
+</h3>
+
+To confirm your Email and Activate your Account on  {{ domain }},
+click the link below:
+<br><br>
+<a href="{{ protocol }}://{{ domain }}{% url 'confirm_email' uidb64=uid token=token %}">Confirm Your E-mail</a>
+<br><br>
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+{% endautoescape %}

@@ -1,0 +1,26 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html>
+    <body>
+        <h3>
+            Hi {{ user.get_username }},
+        </h3>
+
+        To Login To Your Account On  {{ domain }},
+        Use The Following Credentiels:
+        <br><br>
+        <strong>Username:</strong> {{ user.get_username }}
+        <br><br>
+        <strong>Password:</strong> {{ password }}
+        <br><br>
+        You can Login To Your Account On {{ domain }}/account/login
+        <br><br>
+        <strong>Note:</strong> This is a system generated email. Please do not reply to this email.
+        <br><br>
+        <strong>Thanks,</strong>
+        <br>
+        <strong>{{ domain }}</strong>
+    </body>
+</html>
+
+{% endautoescape %}

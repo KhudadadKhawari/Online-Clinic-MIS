@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} Medical History {% endblock %}
+{% block head %}
+<style>
+    tr.header
+    {
+        cursor:pointer;
+    }
+    .text-right
+    {
+        text-align:right;
+    }
+</style>
+
+
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="pb-3">
+        <a href="{% url 'my_patients' %}" class="btn btn-secondary"><i class="fa-solid fa-circle-chevron-left"></i> Go Back</a>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p><strong>Patient's Name:</strong> {{ patient.user.first_name }} {{patient.user.last_name}}</p>
+        </div>
+        <div class="col">
+            <p><strong>Age:</strong> {{ patient.age }}</p>
+        </div>
+        <div class="col">
+            <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+        </div>
+        <div class="col">
+            <p><strong>Email:</strong> {{patient.user.email}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Medical History of <strong>{{patient.user.first_name}} {{patient.user.last_name}}</strong></h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Diagnose</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Prescription</th>
+                            </tr>
+                        </thead>
+
+                        {% for medical_history in medical_histories %}
+                        <tr class="header">
+                            <th><span>+</span></th>
+                            <th>{{medical_history.diagnostic.id}}</th>
+                            <th>{{medical_history.diagnostic.disease}}</th>
+                            <th>{{ medical_history.diagnostic.doctor.user.first_name }} {{medical_history.diagnostic.doctor.user.last_name}}</th>
+                            <th>{{ medical_history.diagnostic.created|date:"d/m/Y" }}</th>
+                            <th>{{ medical_history.diagnostic.description }}</th>
+                            <th>
+                                <!-- Send Email to the patient with the details of his diangostic and all -->
+                                <!-- pid = patient_id, id = diagnostics_id -->
+                                <a href="{% url 'send_prescreption_to_p_email' pid=patient.id id=medical_history.diagnostic.id %}" class="btn btn-outline-primary">Send To Email</a>
+                            </th>
+                        </tr>
+                            {% if medical_history.diagnostic.prescription_set.all %}
+                            <tr class="second_table table-primary">
+                                <th colspan="3" class="text-right">ID</th>
+                                <!-- <th>ID</th> -->
+                                <th>Medicine</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                            {% endif %}
+                            {% for prescription in medical_history.diagnostic.prescription_set.all %}
+                            
+                            <tr class="second_table">
+                                <td colspan="3" class="text-right">{{ prescription.id }}</td>
+                                <!-- <td></td> -->
+                                <td>{{ prescription.medicine }}</td>
+                                <td>{{ prescription.created|date:"d/m/Y" }}</td>
+                                <td>{{ prescription.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="{% static 'js/table_collaps.js' %}"></script>
+{% endblock content%}

@@ -1,0 +1,125 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Manual CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/20ad92d509.js" crossorigin="anonymous"></script>
+    {% block head %}{% endblock head %}
+    <title>HMS-{% block title %}{% endblock title %}</title>
+  </head>
+  <body>
+    <nav class="navbar-expand-lg navbar navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' %}" alt="Logo" width="150px" ></a>
+        <button class="navbar-toggler ms-auto"  type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <!-- #### Navbar ####  -->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link {% if active %} {% if active == 'home' %} active{% endif %} {% endif %}" aria-current="page" href="/"><i class="fa-solid fa-house"></i>&nbsp Home |</a>
+            </li>  
+            <!-- ##  Only Displayed for Doctors and Admin -->
+            {% with user_group=request.user.groups.all.0.name %}
+              {% if 'doctor' in user_group or 'admin' in user_group %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'dashboard' %} active{% endif %} {% endif %}" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge"></i> &nbsp Dashboard | </a>
+              </li> 
+              {% endif %}
+            {% endwith %}
+            <!-- Display only for admin -->
+            {% if 'admin' in request.user.groups.all.0.name %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'users_check_in_check_out_today' %} active{% endif %} {% endif %}" href="{% url 'users_check_in_check_out_today' %}"><i class="fa-solid fa-user-clock"></i> &nbsp Check-in[Today] | </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'users_check_in_check_out_all_time' %} active{% endif %} {% endif %}" href="{% url 'users_check_in_check_out_all_time' %}"><i class="fa-solid fa-users-rectangle"></i> &nbsp Check-in[All Time] | </a>
+              </li> 
+            {% endif %}
+            <!-- # For Staff Users Only -->
+            {% if 'staff' in request.user.groups.all.0.name %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'register_patient' %} active{% endif %} {% endif %}" href="{% url 'register_patient' %}"><i class="fa-solid fa-person-circle-plus"></i> &nbsp Register Patient | </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'approve_patients_request' %} active{% endif %} {% endif %}" href="{% url 'approve_patients_request' %}"><i class="fa-solid fa-person-circle-check"></i></i> &nbsp Approve Patients Request | </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'rejected_patients' %} active{% endif %} {% endif %}" href="{% url 'rejected_patients' %}"><i class="fa-solid fa-person-circle-check"></i></i> &nbsp Rejected Patients | </a>
+              </li> 
+            {% endif %}
+
+            <!-- # For warden Only -->
+            {% if 'warden' in request.user.groups.all.0.name %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'scan_id' %} active{% endif %} {% endif %}" href="{% url 'scan_id' %}"><i class="fa-solid fa-qrcode"></i> &nbsp Scan ID  | </a>
+              </li> 
+            {% endif %}
+
+            <!-- For patients Only -->
+            {% if 'patient' in request.user.groups.all.0.name %}
+            <li class="nav-item">
+              <a class="nav-link {% if active %} {% if active == 'medical_history' %} active{% endif %} {% endif %}" href="{% url 'my_medical_history' %}"><i class="fa-solid fa-clock-rotate-left"></i> &nbsp Medical History | </a>
+            </li> 
+
+            {% endif %}
+                        
+          </ul>
+        </div>
+        <!--  send to end nav -->
+        <div >
+          <div  class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ">
+              <!--  Showing Only if user is not logged in -->
+              {% if not request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'register' %} active{% endif %} {% endif %}" href="{% url 'register' %}"><i class="fa-solid fa-user-plus"></i> &nbsp Register | </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'login' %} active{% endif %} {% endif %}" href="{% url 'user_login' %}"><i class="fa-solid fa-right-to-bracket"></i> &nbsp Login | </a>
+              </li> 
+              {% endif %}
+              <!-- # Showing Only if user is logged in -->
+              {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link {% if active %} {% if active == 'profile' %} active{% endif %} {% endif %}" href="{% url 'profile' %}"><i class="fa-solid fa-user-gear"></i> &nbsp Profile | </a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_logout' %}"><i class="fa-solid fa-circle-xmark"></i> &nbsp Logout </a>
+              </li>
+              {% endif %}
+            </ul>   
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="content m-3 ml-5 mr-5">
+      <div class="container-fluid">
+        {% if messages %}
+        <div class="alert alert-dismissible fade show">
+            {% for message in messages %}
+            <h3  {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </h3>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+      </div>
+      {% block content %} {% endblock content %}
+      {{ redirect_to_login_immediately }}
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>

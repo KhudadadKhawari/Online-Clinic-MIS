@@ -1,0 +1,114 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} Medical History {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="pb-3">
+        <a href="{% url 'my_medical_history' %}" class="btn btn-secondary"><i class="fa-solid fa-circle-chevron-left"></i> Go Back</a>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Medical History</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Diagnose</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>allowed viewers [doctors]</th>
+                                <th>Add/Remove Doctors</th>
+                            </tr>
+                        </thead>
+
+                        {% for medical_history in medical_histories %}
+                        <tr class="header">
+                            <td>{{medical_history.diagnostic.id}}</td>
+                            <td>{{medical_history.diagnostic.disease}}</td>
+                            <td>{{ medical_history.diagnostic.doctor.user.first_name }} {{medical_history.diagnostic.doctor.user.last_name}}</td>
+                            <td>{{ medical_history.diagnostic.created|date:"d/m/Y" }}</td>
+                            <td>{{ medical_history.diagnostic.description }}</td>
+                            <td>
+                                {% for doctor in medical_history.doctors.all %}
+                                [{{ doctor.user.first_name }} {{doctor.user.last_name}}],  
+                                {% endfor %}    
+                            </td>
+                            <td>
+                                <button data-bs-toggle="modal" data-bs-target="#add_doc{{medical_history.diagnostic.id}}modal"  class="btn text-success"><i class="fa-solid fa-user-doctor"></i><i class="fa-solid fa-plus"></i></button>
+                                <button data-bs-toggle="modal" data-bs-target="#remove{{medical_history.diagnostic.id}}modal" class="btn text-danger"><i class="fa-solid fa-user-doctor"></i><i class="fa-solid fa-xmark"></i></button>
+                            </td>
+                            <!-- Add Doctors Modal -->
+                            <div class="modal fade" id="add_doc{{medical_history.diagnostic.id}}modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Allow Doctors to View <strong>{{medical_history.diagnostic.disease}}</strong> Diagnose Details</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{% url 'allow_doctor' mid=medical_history.id %}" method="POST"> 
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <!-- form controll type text -->
+                                            <div class="form-control">
+                                                <label for="doctor_id">Doctor's ID</label>
+                                                <input type="text" name="doctor_id" id="doctor_id" placeholder="Type Doctor's ID...">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">                        
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <input class="btn btn-success" type="submit" name="Confirm" value="Add to Allowed viewers">
+                                        </div>
+                                    </form>
+                                  </div>
+                                </div>
+                            </div>
+                            <!--  Remove Doctor Modal -->
+                            <div class="modal fade" id="remove{{medical_history.diagnostic.id}}modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Remove Doctor from <strong>{{medical_history.diagnostic.disease}}</strong> Diagnose allowed viewers</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{% url 'disallow_doctor' mid=medical_history.id %}"" method="POST"> 
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            <!-- Select Doctor -->
+                                            Select Doctor
+                                            <select class="form-control" name="doctor_id" required>
+                                                {% for doctor in medical_history.doctors.all %}
+                                                <option value="{{doctor.id}}">{{doctor.user.first_name}} {{doctor.user.last_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">                        
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <input class="btn btn-danger" type="submit" name="Confirm" value="Remove from allowed viewers">
+                                        </div>
+                                    </form>
+                                  </div>
+                                </div>
+                            </div>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="{% static 'js/table_collaps.js' %}"></script>
+{% endblock content%}

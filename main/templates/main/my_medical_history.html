@@ -1,0 +1,91 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} Medical History {% endblock %}
+{% block head %}
+<style>
+    tr.header
+    {
+        cursor:pointer;
+    }
+    .text-right
+    {
+        text-align:right;
+    }
+</style>
+
+
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Medical History</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Diagnose</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>allowed viewers [doctors]
+                                    <a href="{% url 'allowed_viewers_doctors' %}"><i class="fa-solid fa-pen-to-square"></i></a>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        {% for medical_history in medical_histories %}
+                        <tr class="header">
+                            <th><span>+</span></th>
+                            <th>{{medical_history.diagnostic.id}}</th>
+                            <th>{{medical_history.diagnostic.disease}}</th>
+                            <th>{{ medical_history.diagnostic.doctor.user.first_name }} {{medical_history.diagnostic.doctor.user.last_name}}</th>
+                            <th>{{ medical_history.diagnostic.created|date:"d/m/Y" }}</th>
+                            <th>{{ medical_history.diagnostic.description }}</th>
+                            <th>
+                                {% for doctor in medical_history.doctors.all %}
+                                [{{ doctor.user.first_name }} {{doctor.user.last_name}}],  
+                                {% endfor %}
+                                
+                            </th>
+                        </tr>
+                            {% if medical_history.diagnostic.prescription_set.all %}
+                            <tr class="second_table table-primary">
+                                <th colspan="3" class="text-right">ID</th>
+                                <!-- <th>ID</th> -->
+                                <th>Medicine</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                            {% endif %}
+                            {% for prescription in medical_history.diagnostic.prescription_set.all %}
+                            
+                            <tr class="second_table">
+                                <td colspan="3" class="text-right">{{ prescription.id }}</td>
+                                <!-- <td></td> -->
+                                <td>{{ prescription.medicine }}</td>
+                                <td>{{ prescription.created|date:"d/m/Y" }}</td>
+                                <td>{{ prescription.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="{% static 'js/table_collaps.js' %}"></script>
+{% endblock content%}

@@ -1,0 +1,26 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html>
+    <body>
+        <h3>
+            Hi {{ username }},
+        </h3>
+
+        Someone is trying to log into your account on {{ domain }},
+        Here are The details:
+        <br><br>
+        <strong>IP Address:</strong> {{ ip_address }}
+        <br><br>
+        <strong>Date and Time:</strong> {{ date_time }}
+        <br><br>
+        If this was you, please ignore this email.
+        <br><br>
+        <strong>Note:</strong> This is a system generated email. Please do not reply to this email.
+        <br><br>
+        <strong>Thanks,</strong>
+        <br>
+        <strong>{{ domain }}</strong>
+    </body>
+</html>
+
+{% endautoescape %}

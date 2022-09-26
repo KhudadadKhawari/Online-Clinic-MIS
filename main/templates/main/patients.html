@@ -1,0 +1,188 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+
+<div class="content">
+    <div class="row mb-3">
+        <div class="col">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_new_patient" >Add New Patient</button>        
+        </div>
+        <!-- <div class="col">
+            <form  method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search_text" placeholder="Search..." aria-label="Search..." aria-describedby="button-addon2">&nbsp;
+                    <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </form>
+        </div> -->
+    </div>
+    
+
+    
+    <!-- # Add New Patient Modal -->
+    <div class="modal fade" id="add_new_patient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add New Patient</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'add_patient' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <!-- # including the from it's own html  -->
+                    {% include 'account/add_patient.html' %} 
+                </div>
+                <div class="modal-footer">                        
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <input class="btn btn-success" type="submit" name="Confirm" value="Add">
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+<table id="data_table" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Patient ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">DOB</th>
+            <th scope="col">email</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Address</th>
+            <th scope="col">Date created</th>
+            <th scope="col">reg/Approved by</th>
+            <th scope="col">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for patient in patients %}
+            <tr>
+                <th scope="row">{{ patient.user.id }}</th>
+                <td>{{ patient.user.username }}</td>
+                <td>{{ patient.user.first_name }} {{ patient.user.last_name }}</td>
+                <td>{{ patient.date_of_birth|date:"d/m/Y" }}</td>
+                <td>{{ patient.user.email }}</td>
+                <td>{{ patient.phone_number }}</td>
+                <td>{{ patient.address }}</td>
+                <td>{{ patient.date_created|date:"d/m/Y" }}</td>
+                <td>{{ patient.registered_by }}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit{{patient.user.id}}modal" >Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_patient{{patient.user.id}}modal" >Delete</button>
+                    {% if patient.user.is_active %}
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#active_disable{{patient.user.id}}modal" >Disable</button>
+                    {% else %}
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#active_disable{{patient.user.id}}modal" >Activate</button>
+                    {% endif %}
+                </td>
+            </tr>
+            <!-- # Edit Modal Patient Modal -->
+            <div class="modal fade" id="edit{{patient.user.id}}modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Patient Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <!--  Must create and update url for patient here -->
+                    <form action="{% url 'update_patient' patient.user.id %}" method="POST"> 
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="form-group mb-3">
+                                <label for="username"> Username</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ patient.user.username }}" >
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="first_name"> First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" value="{{ patient.user.first_name }}" >
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name" value="{{ patient.user.last_name }}">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ patient.user.email }}">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="phone_number">Phone Number</label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Phone Number" value="{{ patient.phone_number }}">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="Phone Number" value="{{ patient.address }}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">                        
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <input class="btn btn-success" type="submit" name="Confirm" value="Update">
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DELETE STAFF MODAL -->
+            <div class="modal fade" id="delete_patient{{patient.user.id}}modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Patient</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are You sure You want to Remove {{patient.user.first_name}} {{patient.user.last_name}}?
+                    </div>
+                    <div class="modal-footer">
+                        <form action="{% url 'delete_patient' patient.user.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <input class="btn btn-danger" type="submit" name="Confirm" value="Delete">
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- disable Account Modal -->
+            <div class="modal fade" id="active_disable{{patient.user.id}}modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Disable Warden</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are You sure You want to Disable/Activate {{patient.user.first_name}} {{patient.user.last_name}} Account?
+                    </div>
+                    <div class="modal-footer">
+                        <form action="{% url 'active_disable_patient' patient.user.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            {% if patient.user.is_active %}
+                                <input class="btn btn-danger" type="submit" name="Confirm" value="Disable">
+                            {% else %}
+                                <input class="btn btn-success" type="submit" name="Confirm" value="Activate">
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="{% static 'js/data_table.js' %}"></script>

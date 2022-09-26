@@ -1,0 +1,123 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<br>
+<h2 class="text-center">Approve New Patient's Joining Request</h2>
+<hr>
+<div class="container">
+    <table class="table table-striped table-hover">
+        <thead>
+            
+            <tr>
+                <th scope="col"> ID</th>
+                <th scope="col"> Username</th>
+                <th scope="col"> Name</th>
+                <th scope="col"> Date of Birth</th>
+                <th scope="col"> Phone Number</th>
+                <th scope="col"> Email</th>
+                <th scope="col"> Date Registered</th>
+                <th scope="col">
+                    <form  method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search_text" placeholder="Search..." aria-label="Search..." aria-describedby="button-addon2">&nbsp;
+                            <button class="btn btn-outline-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </form>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+                <tr>
+                    <th scope="row">{{ patient.id }}</th>
+                    <td>{{ patient.username }}</td>
+                    <td>{{ patient.first_name}} {{patient.last_name }}</td>
+                    <td>{{ patient.patient.date_of_birth|date:"d-m-Y" }}</td>
+                    <td>{{ patient.patient.phone_number }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td>{{ patient.patient.date_created|date:"d-m-Y" }}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#patient{{patient.id}}del" >Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#patient{{patient.id}}rej" >Reject</button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#patient{{patient.id}}appr" >Approve</button>
+                        
+                        <!-- # Delete patient request Modal -->
+                        
+                        <div class="modal fade" id="patient{{patient.id}}del" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Delete Patient</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are You sure You want to Remove {{patient.first_name}} {{patient.last_name}}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{% url 'delete_patient' patient.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <input class="btn btn-danger" type="submit" name="Confirm" value="Delete">
+                                    </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+    
+                        <!-- # Reject patient request Modal -->
+                        <div class="modal fade" id="patient{{patient.id}}rej" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Reject Patient</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are You sure You want to Reject {{patient.first_name}} {{patient.last_name}} Joining Request?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{% url 'reject_patient' patient.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <input class="btn btn-primary" type="submit" name="Confirm" value="Reject">
+                                    </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+    
+                        <!-- # Approve patient request Modal -->
+                        <div class="modal fade" id="patient{{patient.id}}appr" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Approve Patient</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are You sure You want to Approve {{patient.first_name}} {{patient.last_name}} Joining Request?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{% url 'approve_patient' patient.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <input class="btn btn-success" type="submit" name="Confirm" value="Approve">
+                                    </form>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+    
+    
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    
+    
+    </table>
+</div>
+
+{% endblock %}

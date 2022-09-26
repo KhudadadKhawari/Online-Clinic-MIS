@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% block title %} Add Prescription {% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Add Prescription</h1>
+            <div style="text-align: left;">
+                <a href="{% url 'my_patients' %}" class="btn btn-secondary"><i class="fa-solid fa-circle-chevron-left"></i> Go Back</a>
+                <h5>Patient Name: {{patient.user.first_name}} {{patient.user.last_name}}</h5>
+            </div>
+        </div>
+        <form action="" method="POST"> 
+            {% csrf_token %}
+            <div class="modal-body">
+                <!-- select the Diagnose -->
+                <div class="form-group">
+                    <label for="diagnose">Select Disease | patient | Disease | date & time</label>
+                    <select class="form-control" id="diagnose" name="diagnose">
+                        {% for diagnose in diagnoses %}
+                            <option value="{{diagnose.id}}">{{diagnose.disease}} | {{diagnose.patient.user.first_name}} {{diagnose.patient.user.last_name}} | {{diagnose.created|date:"d/m/Y | h:m:s A"}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="medicine">Name of medicines</label>
+                    <input type="text" class="form-control" id="medicine" name="medicine" placeholder="Name of medicine" autofocus required >
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description">Descriptions</label>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Descriptions" required>
+                </div>
+            </div>
+            <div class="modal-footer">                        
+                <input class="btn btn-success" type="submit" name="Confirm" value="Submit Diagnose">
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+</script>
+
+
+
+
+<div class="row">
+    <div class="col-sm">
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                {{all_users_chart.as_html}}
+                {{ active_users_chart.as_html }}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+.active{
+    background-color: darkblue;
+}
+.nav-link:hover{
+    background-color: darkblue;
+}
+.tab-item a{
+    color: black;
+}
+.tab-item a:hover{
+    color: white;
+}

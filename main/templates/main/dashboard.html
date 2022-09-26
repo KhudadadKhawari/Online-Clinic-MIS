@@ -1,0 +1,101 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+<!-- Head -->
+{% block title %}
+Dashboard
+{% endblock title %}
+
+<!--  Content  -->
+{% block content %}
+<div class="container">
+    <h1 class="text-center">Dashboard</h1>
+    <!-- DashBoard -->
+    <!-- Navbar -->
+    <ul class="nav nav-tabs">
+      <!--  # Only Visible to Admins -->
+      {% if 'admin' in request.user.groups.all.0.name %}
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'active_users_chart' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'active_users_chart' %}"><i class="fa-solid fa-users"></i> &nbsp All Users Chart</a>
+      </li>
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'staffs' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'all_staff' %}"><i class="fa-solid fa-hospital-user"></i> &nbsp Staffs </a>
+      </li>
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'all_doctors' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'all_doctors' %}"><i class="fa-solid fa-user-doctor"></i> &nbsp Doctors</a>
+      </li>
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'patients' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'patients' %}"><i class="fa-solid fa-person"></i> &nbsp Patients</a>
+      </li>
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'wardens' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'wardens' %}"><i class="fa-solid fa-person-military-pointing"></i> &nbsp Warden</a>
+      </li>
+      {% endif %}
+      <!-- Visible to both doctors  -->
+      {% if 'doctor' in request.user.groups.all.0.name %}
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'all_patients' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'all_patients' %}"><i class="fa-solid fa-users-line"></i> &nbsp All Patients</a>
+      </li>
+
+      <li class="nav-item tab-item">
+          <a class="nav-link {% if active2 %} {% if active2 == 'my_patients' %} active{% endif %} {% endif %}" aria-current="page" href="{% url 'my_patients' %}"><i class="fa-solid fa-bed"></i> &nbsp My Patients</a>
+      </li>
+      {% endif %}
+  
+    </ul>
+    <br><br>
+</div>
+ 
+<div class="container">
+    {% if active2 %}
+        {% if active2 == 'active_users_chart' %}
+            {% include "main/active_users_chart.html" %}
+        {% endif %} 
+    {% endif %}
+
+
+    {% if active2 %}
+        {% if active2 == 'staffs' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/all_staff.html" %}
+        {% endif %} 
+    {% endif %}
+
+    {% if active2 %}
+        {% if active2 == 'all_doctors' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/all_doctors.html" %}
+        {% endif %} 
+    {% endif %}
+
+    {% if active2 %}
+        {% if active2 == 'patients' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/patients.html" %}
+        {% endif %} 
+    {% endif %}
+
+    {% if active2 %}
+        {% if active2 == 'wardens' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/wardens.html" %}
+        {% endif %} 
+    {% endif %}
+
+    <!--  Doctors View  -->
+    
+    {% if active2 %}
+        {% if active2 == 'my_patients' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/my_patients.html" %}
+        {% endif %} 
+    {% endif %}
+
+    {% if active2 %}
+        {% if active2 == 'all_patients' %}
+            <!-- Include all Users Specified HTML page -->
+            {% include "main/all_patients.html" %}
+        {% endif %} 
+    {% endif %}
+    {% endblock content %}
+</div>

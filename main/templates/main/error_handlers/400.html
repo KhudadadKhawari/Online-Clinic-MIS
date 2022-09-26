@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %} 400 Bad Request {% endblock %}
+{% block head %}
+<style>
+    .error-template {padding: 40px 15px;text-align: center;}
+    .error-actions {margin-top:15px;margin-bottom:15px;}
+    .error-actions .btn { margin-right:10px; }
+</style>
+{% endblock head %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <img src="{% static 'images/error_400.png'%}" alt="error 400" width="400px" class="img-fluid">
+                <h1>Oops!</h1>
+                <h2>400 Bad Request</h2>
+                <div class="error-details">
+                    Sorry, an error has occured, Requested page not found!
+                </div>
+                <div class="error-actions">
+                    <input class="btn btn-lg btn-outline-primary" type="button" value="Go Back" onClick="javascript:history.go(-1);">
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

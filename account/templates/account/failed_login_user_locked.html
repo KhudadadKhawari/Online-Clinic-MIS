@@ -1,0 +1,11 @@
+{% extends 'main/base.html' %}
+{% block title %}Login Failed{% endblock %}
+
+{% block content %}
+    <div class="container text-center">
+        <h1><strong>Login Failed </strong></h1>
+        <h2 class="text-info">You have exceeded  {{failure_limit}} login attempts</h2>
+        <h3 class="text-info">Please try again later after {{cooloff_timedelta}}</h3>
+
+    </div>
+{% endblock content %}

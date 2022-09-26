@@ -1,0 +1,158 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load qr_code %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/user_profile_styles.css' %}">
+{% endblock head %}
+{% block title %} Profile {% endblock title %}
+
+{% block content %}
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="account-settings">
+                            <div class="user-profile">
+                                <div class="user-avatar">
+                                    <div class="profile-pic">
+                                        <label class="-label" for="file">
+                                        <span class="glyphicon glyphicon-camera"></span>
+                                        <span>Change Image</span>
+                                        </label>
+                                        {{ form.photo }}
+                                        <!-- <input id="file" type="file" onchange="loadFile(event)"/> -->
+                                        {% if 'staff' in request.user.groups.all.0.name %}
+                                            <img src="{{ request.user.staff.photo.url }}" id="output" width="200" />                            
+                                                </div>
+                                            </div>
+                                            <h5 class="user-name">user_id: {{request.user.staff.id}}</h5>
+                                        {% elif 'doctor' in request.user.groups.all.0.name %}
+                                            <img src="{{ request.user.doctor.photo.url }}" id="output" width="200" />
+                                                </div>
+                                            </div>
+                                            <h5 class="user-name">user_id: {{request.user.doctor.id}}</h5>
+                                        {% elif 'patient' in request.user.groups.all.0.name %}
+                                            <img src="{{ request.user.patient.photo.url }}" id="output" width="200" />
+                                                </div>
+                                            </div>
+                                            <h5 class="user-name">user_id: {{request.user.patient.id}}</h5>
+                                        {% elif 'warden' in request.user.groups.all.0.name %}
+                                            <img src="{{ request.user.warden.photo.url }}" id="output" width="200" />
+                                                </div>
+                                            </div>
+                                            <h5 class="user-name">user_id: {{request.user.warden.id}}</h5>
+                                        {% elif 'admin' in request.user.groups.all.0.name %}
+                                            <img src = "{{ request.user.admin.photo.url }}" id="output" width="200" />
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <img src="{% static 'images/profile_images/default.jpg' %}" id="output" width="200" />
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                <h5 class="user-name">{{request.user.username}}</h5>
+                                <h6 class="user-email">{{request.user.email}}</h6>
+                                <a href="{% url 'change_password' %}" class="btn btn-outline-primary">Change Password</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                <div class="card h-100">
+                    <div  class="card-body">
+                        <div class="row gutters">
+                            {% if 'admin' in request.user.groups.all.0.name %}
+                            <h6 class="alert-info">You can't change Admin profile details from here. Disabled by Developer</h6>
+                            {% endif %}
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <h6 class="mb-2 text-primary">Personal Details</h6>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    {{form.username}}
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    {{form.email}}
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="first_name">First Name</label>
+                                    {{form.first_name}}
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="last_name">Last Name</label>
+                                    {{form.last_name}}
+                                </div>
+                            </div>
+                            <!--  Only Visible for Patient -->
+                            {% if 'patient' in request.user.groups.all.0.name %}
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="date_of_birth">Date Of Birth</label>
+                                        {{form.date_of_birth}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- # disable Displaying for Admin  -->
+                            {% if 'admin' not in request.user.groups.all.0.name %}
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="phone_number">Phone Number</label>
+                                        {{form.phone_number}}
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        {{form.address}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- # Disabled for Admin users by developer  -->
+                        {% if not 'admin' in request.user.groups.all.0.name %}
+                        <div class="col text-center mt-3">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="text-center">
+                                    <input class="btn btn-secondary" type="button" value="Cancel" onClick="javascript:history.go(-1);">
+                                    <input  class="btn btn-primary" type="submit"   value="Update">
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                                <div>
+                                    {% qr_from_text qr_code_text image_format="png" error_correction="L"%}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+var loadFile = function (event) {
+    var image = document.getElementById("output");
+    image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script>
+
+
+
+{% endblock content %}

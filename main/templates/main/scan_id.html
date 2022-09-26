@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+{% block title %} Scan ID {% endblock title %}
+
+{% block head%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{% endblock head %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header text-center">
+            <h3>Doctors and Staff Check-in Check-out</h3>
+        </div>
+        <div class="card-body">
+            <div class="text-center alert-info">
+                <h4>Scan your ID</h4>
+                <p>Please scan your ID to check-in or check-out.</p>
+            </div>
+            <div class="col-md-12" style="text-align: center; margin-bottom: 20px;">
+                <div id="reader" style="padding:0px; border: 1px solid silver; display: inline-block; position: relative; height: 400px; width: 400px;" >
+                    <!-- The javaScript will take care of this -->
+                </div>
+                <br>
+                <div class="justify-content-center pt-3" style="display: inline-block; position:relative;">
+                    <div class="card" style="width: 400px;">
+                        <div  class="card-header bg-info text-white">Details</div>
+                        <div  class="card-body">
+                            <div class="alert-info">
+                                {{passed_text}}
+                            </div>
+                            <div  id="decoded_data" class="text-center">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            try{
+                    var json = JSON.parse(decodedText);
+                }
+                catch (SyntaxError) {
+                    json = {};
+                }
+                if ("user_type" in json && "user_id" in json){
+                    document.getElementById('decoded_data').innerHTML = 
+                        `Successfull: ${json["user_id"]} | ${json["user_type"]}`;
+                    document.getElementById('decoded_data').classList.contains('text-danger') ? document.getElementById('decoded_data').classList.remove('text-danger') : '';
+                    document.getElementById('decoded_data').classList.add('text-success');
+
+                    $.ajax(
+                        {
+                            url: "{% url 'scan_id' %}",
+                            type: "POST",
+                            data: {
+                                'id': json["user_id"],
+                                'user_type': json["user_type"],
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                        }
+                    );
+                    // reload the page after seding the requst successfully
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 2000);
+                }
+                else{
+                    document.getElementById('decoded_data').innerHTML = 
+                        `Error: ${decodedText}`;
+                    document.getElementById('decoded_data').classList.contains('text-success') ? document.getElementById('decoded_data').classList.remove('text-success') : '';
+                    document.getElementById('decoded_data').classList.add('text-danger');
+                }
+        }
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 1, qrbox: {width: 250, height: 250} },
+        /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess);
+    
+    </script>
+
+{% endblock content %}

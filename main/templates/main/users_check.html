@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load tz %}
+{% block title %} Medical History {% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" />
+<style>
+    tr.header
+    {
+        cursor:pointer;
+    }
+    .text-right
+    {
+        text-align:right;
+    }
+</style>
+
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Check-in/ Check-out</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="data_table" class="table table-bordered table-striped">
+                        <thead class="table-primary">
+                            <tr>
+                                <th aria-controls="data_table">ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Checked By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for check in check_in_check_out %}
+                            <tr>
+                                {% localtime on %}
+                                <td>{{check.id}}</td>
+                                <td>{{check.user.first_name}}</td>
+                                <td>{{check.user.last_name}}</td>
+                                <td>{{check.checked_in}}</td>
+                                <td>{{check.checked_out}}</td>
+                                <td>{{check.warden.user.first_name}} {{check.warden.user.last_name}}</td>
+
+                                {% endlocaltime %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="{% static 'js/data_table.js' %}"></script>
+{% endblock content%}
