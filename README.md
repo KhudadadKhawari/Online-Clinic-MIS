@@ -11,6 +11,9 @@ Python
 ## Database:
 MySQL ( demo version uses sqlite3 ORM)
 
+## Project DEMO
+https://online-clinic-mis.herokuapp.com/
+
 ## Demo Version Accounts Usernames and Passwords:
 Click on the DEMO button and log in using the following credentials:
 
